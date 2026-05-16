@@ -4,7 +4,7 @@ Integration of MQ-2 & DHT11 Sensors with Raspberry Pi and Blynk Interface
 """
 
 import RPi.GPIO as GPIO
-import Adafruit_DHT
+import adafruit_dht
 import time
 import board
 import busio
@@ -23,6 +23,7 @@ current_speed = 100
 blynk = None
 ads = None
 arduino_serial = None
+dht_device = None
 running = True
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -258,16 +259,49 @@ def read_dht11_sensor():
     Returns tuple of (humidity, temperature)
     """
     try:
-        humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR_TYPE, DHT_SENSOR_PIN)
-        
+        device = _get_dht_device()
+        if device is None:
+            return None, None
+
+        temperature = device.temperature
+        humidity = device.humidity
+
         if humidity is not None and temperature is not None:
             return humidity, temperature
         else:
             print("Failed to read DHT11 sensor")
             return None, None
+    except RuntimeError:
+        return None, None
     except Exception as e:
         print(f"Error reading DHT11: {e}")
         return None, None
+
+
+def _get_board_pin(bcm_pin):
+    try:
+        return getattr(board, f"D{bcm_pin}")
+    except AttributeError as e:
+        raise ValueError(f"Unsupported BCM pin for Blinka: {bcm_pin}") from e
+
+
+def _get_dht_device():
+    global dht_device
+    if dht_device is not None:
+        return dht_device
+
+    try:
+        dht_pin = _get_board_pin(DHT_SENSOR_PIN)
+        if DHT_SENSOR_TYPE == 11:
+            dht_device = adafruit_dht.DHT11(dht_pin, use_pulseio=False)
+        elif DHT_SENSOR_TYPE == 22:
+            dht_device = adafruit_dht.DHT22(dht_pin, use_pulseio=False)
+        else:
+            raise ValueError(f"Unsupported DHT sensor type: {DHT_SENSOR_TYPE}")
+        return dht_device
+    except Exception as e:
+        print(f"Error initializing DHT sensor: {e}")
+        return None
 
 
 # =====================
@@ -435,6 +469,12 @@ def main():
             try:
                 arduino_serial.close()
                 print("Serial connection closed")
+            except:
+                pass
+
+        if dht_device is not None:
+            try:
+                dht_device.exit()
             except:
                 pass
         

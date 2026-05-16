@@ -4,7 +4,7 @@ Test DHT11 and MQ-2 sensor functionality
 """
 
 import time
-import Adafruit_DHT
+import adafruit_dht
 import board
 import busio
 from config import DHT_PIN, MQ2_PIN
@@ -21,26 +21,48 @@ def test_dht11():
     
     try:
         print("Reading DHT11 (this may take a few seconds)...")
-        
-        for attempt in range(5):
-            humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR_TYPE, DHT_SENSOR_PIN)
-            
-            if humidity is not None and temperature is not None:
-                print(f"\nAttempt {attempt + 1}:")
-                print(f"  Temperature: {temperature:.1f}°C")
-                print(f"  Humidity: {humidity:.1f}%")
-            else:
-                print(f"\nAttempt {attempt + 1}: Failed to read sensor")
-            
-            if attempt < 4:
-                time.sleep(2)
-        
+        dht_pin = _get_board_pin(DHT_SENSOR_PIN)
+        if DHT_SENSOR_TYPE == 11:
+            dht_device = adafruit_dht.DHT11(dht_pin, use_pulseio=False)
+        elif DHT_SENSOR_TYPE == 22:
+            dht_device = adafruit_dht.DHT22(dht_pin, use_pulseio=False)
+        else:
+            raise ValueError(f"Unsupported DHT sensor type: {DHT_SENSOR_TYPE}")
+
+        try:
+            for attempt in range(5):
+                try:
+                    temperature = dht_device.temperature
+                    humidity = dht_device.humidity
+                except RuntimeError:
+                    temperature = None
+                    humidity = None
+
+                if humidity is not None and temperature is not None:
+                    print(f"\nAttempt {attempt + 1}:")
+                    print(f"  Temperature: {temperature:.1f}°C")
+                    print(f"  Humidity: {humidity:.1f}%")
+                else:
+                    print(f"\nAttempt {attempt + 1}: Failed to read sensor")
+
+                if attempt < 4:
+                    time.sleep(2)
+        finally:
+            dht_device.exit()
+
         print("\n✓ DHT11 test completed")
         return True
     
     except Exception as e:
         print(f"\n✗ DHT11 Error: {e}")
         return False
+
+
+def _get_board_pin(bcm_pin):
+    try:
+        return getattr(board, f"D{bcm_pin}")
+    except AttributeError as e:
+        raise ValueError(f"Unsupported BCM pin for Blinka: {bcm_pin}") from e
 
 
 def test_mq2():
