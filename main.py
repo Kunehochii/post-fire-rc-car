@@ -10,7 +10,11 @@ import board
 import busio
 import serial
 import threading
-from blynklib import Blynk
+try:
+    from blynklib import Blynk
+except ModuleNotFoundError:
+    import BlynkLib
+    Blynk = BlynkLib.Blynk
 from Adafruit_ADS1x15 import ADS1115
 from config import BLYNK_AUTH, MQ2_PIN, DHT_PIN, MOTOR_PINS, SERVO_PINS
 
