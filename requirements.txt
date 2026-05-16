@@ -1,8 +1,6 @@
-RPi.GPIO==0.7.0
-Adafruit-DHT==1.15.4
-Adafruit-ADS1x15==1.9.2
-blynk-library-python==0.2.6
-board==1.0.0
-busio==1.9.2
-adafruit-circuitpython-ads1x15==2.3.1
+RPi.GPIO==0.7.1
+Adafruit-DHT==1.4.0
+Adafruit-ADS1x15==1.0.2
+blynk-library-python==0.2.0
+Adafruit-Blinka==9.1.0
 pyserial==3.5
