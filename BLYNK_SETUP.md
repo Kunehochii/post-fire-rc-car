@@ -41,55 +41,9 @@
 
 Click Play button (▶) → Edit mode (pencil icon)
 
-### Add Widget: V0 - Status Label
+### Output Widgets Only (No Controls)
 
-1. Tap **"+"** → Add widget
-2. Select **"Label"**
-3. Settings:
-   - **Virtual Pin**: V0
-   - **Name**: Status
-   - **Display**: "Blynk Connected"
-4. Click Save
-
-### Add Widget: V1 - Joystick (Movement Control)
-
-1. Tap **"+"** → Add widget
-2. Select **"Joystick"**
-3. Settings:
-   - **Virtual Pin**: V1
-   - **Name**: Movement
-   - **Rotation**: 0°
-   - **Range X**: -1 to 1
-   - **Range Y**: -1 to 1
-4. Click Save
-
-### Add Widget: V2 - Button Matrix (Commands)
-
-1. Tap **"+"** → Add widget
-2. Select **"Button Matrix"**
-3. Settings:
-   - **Virtual Pin**: V2
-   - **Name**: Car Controls
-   - **Buttons**: 5
-   - **Label buttons**:
-     - Button 0: "STOP"
-     - Button 1: "FORWARD"
-     - Button 2: "BACKWARD"
-     - Button 3: "LEFT"
-     - Button 4: "RIGHT"
-4. Click Save
-
-### Add Widget: V3 - Speed Slider
-
-1. Tap **"+"** → Add widget
-2. Select **"Slider"**
-3. Settings:
-   - **Virtual Pin**: V3
-   - **Name**: Speed
-   - **Min**: 0
-   - **Max**: 100
-   - **Value**: 50
-4. Click Save
+Add these three widgets to show sensor readings only:
 
 ### Add Widget: V4 - Humidity Label
 
@@ -98,7 +52,7 @@ Click Play button (▶) → Edit mode (pencil icon)
 3. Settings:
    - **Virtual Pin**: V4
    - **Name**: Humidity
-   - **Display**: "--"
+   - **Display**: "--" (optional default)
 4. Click Save
 
 ### Add Widget: V5 - Temperature Label
@@ -108,7 +62,7 @@ Click Play button (▶) → Edit mode (pencil icon)
 3. Settings:
    - **Virtual Pin**: V5
    - **Name**: Temperature
-   - **Display**: "--"
+   - **Display**: "--" (optional default)
 4. Click Save
 
 ### Add Widget: V6 - Gas Level Gauge
@@ -148,10 +102,6 @@ The app will automatically update colors.
 
 | Virtual Pin | Widget | Purpose | Range |
 |------------|--------|---------|-------|
-| V0 | Label | Connection Status | - |
-| V1 | Joystick | Movement Control | -1 to 1 (X,Y) |
-| V2 | Buttons | Car Commands | 0-4 |
-| V3 | Slider | Motor Speed | 0-100 |
 | V4 | Label | Humidity Reading | 0-100% |
 | V5 | Label | Temperature Reading | -40 to 80°C |
 | V6 | Gauge | Gas/Smoke Level | 0-100 |
@@ -170,7 +120,7 @@ ifconfig
 ### Check Blynk Connection
 1. Run main.py
 2. Look for message: `Blynk connected. Ping: XX`
-3. Check Blynk app - should show connected status
+3. Check Blynk app - humidity, temperature, and gas level should update
 
 ### Troubleshooting
 
@@ -193,22 +143,9 @@ ifconfig
 ### Suggested Layout:
 ```
 ┌─────────────────────┐
-│   CONTROL SECTION   │
-│   ┌─────────────┐   │
-│   │  Joystick   │   │
-│   │     V1      │   │
-│   └─────────────┘   │
-│   ┌─────────────┐   │
-│   │ Buttons V2  │   │
-│   └─────────────┘   │
-│   ┌─────────────┐   │
-│   │ Speed V3    │   │
-│   └─────────────┘   │
-├─────────────────────┤
 │ SENSOR READINGS     │
 │ Temp: {V5}  Hum: {V4} │
 │ Gas Level: {V6}     │
-│ Status: {V0}        │
 └─────────────────────┘
 ```
 
