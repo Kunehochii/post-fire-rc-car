@@ -10,7 +10,7 @@ import board
 import busio
 import serial
 import threading
-from blynk_lib import Blynk
+from blynklib import Blynk
 from Adafruit_ADS1x15 import ADS1115
 from config import BLYNK_AUTH, MQ2_PIN, DHT_PIN, MOTOR_PINS, SERVO_PINS
 
