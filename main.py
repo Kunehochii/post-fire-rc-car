@@ -28,6 +28,7 @@ ads = None
 arduino_serial = None
 dht_device = None
 running = True
+blynk_port = BLYNK_PORT
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
@@ -75,8 +76,8 @@ def setup_gpio():
 # Blynk & ADC Initialization
 # =====================
 def _create_blynk_client():
-    use_ssl = BLYNK_PORT == 443
-    kwargs = {"server": BLYNK_SERVER, "port": BLYNK_PORT}
+    use_ssl = blynk_port == 443
+    kwargs = {"server": BLYNK_SERVER, "port": blynk_port}
     for ssl_kw in ("ssl", "secure"):
         try:
             return Blynk(BLYNK_AUTH, **kwargs, **{ssl_kw: use_ssl})
@@ -129,6 +130,32 @@ def _safe_blynk_run():
         print(f"Warning: Blynk connection lost: {e}")
         _reset_blynk_client()
         return False
+
+    return _blynk_is_connected()
+
+
+def _attempt_blynk_connect():
+    global blynk, blynk_port
+
+    if blynk is None or not hasattr(blynk, "connect"):
+        return False
+
+    try:
+        blynk.connect()
+        if _blynk_is_connected():
+            return True
+    except Exception as e:
+        print(f"Warning: Blynk connect failed on port {blynk_port}: {e}")
+
+    alt_port = 80 if blynk_port == 443 else 443
+    if alt_port != blynk_port:
+        try:
+            blynk_port = alt_port
+            blynk = _create_blynk_client()
+            print(f"Retrying Blynk on port {blynk_port}...")
+            blynk.connect()
+        except Exception as e:
+            print(f"Warning: Blynk connect failed on port {blynk_port}: {e}")
 
     return _blynk_is_connected()
 
@@ -424,11 +451,8 @@ def main():
         
         # Connect to Blynk if available
         if blynk is not None:
-            if hasattr(blynk, "connect"):
-                try:
-                    blynk.connect()
-                except Exception as e:
-                    print(f"Warning: Blynk connect failed: {e}")
+            print(f"Blynk target: {BLYNK_SERVER}:{blynk_port}")
+            _attempt_blynk_connect()
         else:
             print("Warning: Blynk not available, running in local mode only")
         
@@ -446,7 +470,7 @@ def main():
                     if current_time - last_blynk_attempt >= 5:
                         try:
                             print("Attempting to reconnect to Blynk...")
-                            blynk.connect()
+                            _attempt_blynk_connect()
                         except Exception as e:
                             print(f"Warning: Blynk connect failed: {e}")
                         last_blynk_attempt = current_time
