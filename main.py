@@ -75,10 +75,31 @@ def setup_gpio():
 # Blynk & ADC Initialization
 # =====================
 def _create_blynk_client():
+    use_ssl = BLYNK_PORT == 443
     try:
-        return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT)
+        return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT, ssl=use_ssl)
     except TypeError:
-        return Blynk(BLYNK_AUTH)
+        try:
+            return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT)
+        except TypeError:
+            return Blynk(BLYNK_AUTH)
+
+
+def _try_blynk_connect():
+    if blynk is None:
+        return False
+
+    try:
+        result = blynk.connect()
+    except Exception as e:
+        print(f"Warning: Blynk connect failed: {e}")
+        return False
+
+    if result is False:
+        print("Warning: Blynk connect failed")
+        return False
+
+    return blynk.is_connected()
 
 
 try:
@@ -372,28 +393,31 @@ def main():
         
         # Connect to Blynk if available
         if blynk is not None:
-            blynk.connect()
+            print(f"Connecting to Blynk at {BLYNK_SERVER}:{BLYNK_PORT}...")
+            _try_blynk_connect()
         else:
             print("Warning: Blynk not available, running in local mode only")
         
         # Main loop
         sensor_read_interval = 2  # Read sensors every 2 seconds
         last_sensor_read = time.time()
+        last_blynk_attempt = 0
         
         while True:
-            # Handle Blynk connection
-            if blynk is not None and blynk.is_connected():
+            current_time = time.time()
+
+            if blynk is not None:
                 blynk.run()
-                
-                # Publish sensor data at interval
-                current_time = time.time()
-                if current_time - last_sensor_read >= sensor_read_interval:
-                    publish_sensor_data()
-                    last_sensor_read = current_time
-            else:
-                if blynk is not None:
-                    print("Attempting to reconnect to Blynk...")
-                    blynk.connect()
+
+                if blynk.is_connected():
+                    if current_time - last_sensor_read >= sensor_read_interval:
+                        publish_sensor_data()
+                        last_sensor_read = current_time
+                else:
+                    if current_time - last_blynk_attempt >= 5:
+                        print("Attempting to reconnect to Blynk...")
+                        _try_blynk_connect()
+                        last_blynk_attempt = current_time
             
             time.sleep(0.1)
     
