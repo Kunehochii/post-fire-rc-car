@@ -7,7 +7,6 @@ import RPi.GPIO as GPIO
 import adafruit_dht
 import time
 import board
-import busio
 import serial
 import threading
 try:
@@ -16,7 +15,7 @@ except ModuleNotFoundError:
     import BlynkLib
     Blynk = BlynkLib.Blynk
 from Adafruit_ADS1x15 import ADS1115
-from config import BLYNK_AUTH, BLYNK_PORT, BLYNK_SERVER, MQ2_PIN, DHT_PIN, MOTOR_PINS, SERVO_PINS
+from config import ADS1115_ADDRESS, BLYNK_AUTH, BLYNK_PORT, BLYNK_SERVER, I2C_BUS, MQ2_PIN, DHT_PIN, MOTOR_PINS, SERVO_PINS
 
 # =====================
 # Global Variables
@@ -90,8 +89,7 @@ except Exception as e:
     blynk = None
 
 try:
-    i2c = busio.I2C(board.SCL, board.SDA)
-    ads = ADS1115(i2c)
+    ads = ADS1115(address=ADS1115_ADDRESS, busnum=I2C_BUS)
     print("ADS1115 ADC initialized")
 except Exception as e:
     print(f"Warning: ADS1115 ADC initialization failed: {e}")

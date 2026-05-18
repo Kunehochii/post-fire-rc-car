@@ -6,8 +6,7 @@ Test DHT22 and MQ-2 sensor functionality
 import time
 import adafruit_dht
 import board
-import busio
-from config import DHT_PIN, MQ2_PIN
+from config import ADS1115_ADDRESS, DHT_PIN, I2C_BUS, MQ2_PIN
 
 DHT_SENSOR_PIN = DHT_PIN['pin']
 DHT_SENSOR_TYPE = DHT_PIN['type']
@@ -72,10 +71,8 @@ def test_mq2():
     
     try:
         print("Initializing I2C and ADS1115...")
-        i2c = busio.I2C(board.SCL, board.SDA)
-        
         from Adafruit_ADS1x15 import ADS1115
-        ads = ADS1115(i2c)
+        ads = ADS1115(address=ADS1115_ADDRESS, busnum=I2C_BUS)
         
         print("Reading MQ-2 values (10 readings)...\n")
         
@@ -115,8 +112,11 @@ def test_i2c_devices():
     print("-" * 50)
     
     try:
-        i2c = busio.I2C(board.SCL, board.SDA)
         print("I2C bus initialized successfully")
+        print(f"I2C bus: {I2C_BUS}")
+        print(f"ADS1115 address: 0x{ADS1115_ADDRESS:02X}")
+        print("Command to scan:")
+        print(f"  i2cdetect -y {I2C_BUS}")
         
         # Try to find devices
         print("\nSearching for I2C devices...")
@@ -131,7 +131,6 @@ def test_i2c_devices():
         except:
             print("  Note: Basic device scanning may be limited")
         
-        i2c.deinit()
         return True
     
     except Exception as e:
