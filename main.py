@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     import BlynkLib
     Blynk = BlynkLib.Blynk
 from Adafruit_ADS1x15 import ADS1115
-from config import BLYNK_AUTH, MQ2_PIN, DHT_PIN, MOTOR_PINS, SERVO_PINS
+from config import BLYNK_AUTH, BLYNK_PORT, BLYNK_SERVER, MQ2_PIN, DHT_PIN, MOTOR_PINS, SERVO_PINS
 
 # =====================
 # Global Variables
@@ -57,7 +57,8 @@ def setup_gpio():
     global pwm_left, pwm_right
     
     motor_pins = [MOTOR_LEFT_FORWARD, MOTOR_LEFT_BACKWARD, 
-                  MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_BACKWARD]
+                  MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_BACKWARD,
+                  MOTOR_LEFT_SPEED, MOTOR_RIGHT_SPEED]
     
     for pin in motor_pins:
         GPIO.setup(pin, GPIO.OUT)
@@ -74,8 +75,15 @@ def setup_gpio():
 # =====================
 # Blynk & ADC Initialization
 # =====================
+def _create_blynk_client():
+    try:
+        return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT)
+    except TypeError:
+        return Blynk(BLYNK_AUTH)
+
+
 try:
-    blynk = Blynk(BLYNK_AUTH)
+    blynk = _create_blynk_client()
     print("Blynk object created")
 except Exception as e:
     print(f"Warning: Blynk initialization failed: {e}")
