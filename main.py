@@ -385,7 +385,11 @@ def main():
         
         # Connect to Blynk if available
         if blynk is not None:
-            blynk.connect()
+            if hasattr(blynk, "connect"):
+                try:
+                    blynk.connect()
+                except Exception as e:
+                    print(f"Warning: Blynk connect failed: {e}")
         else:
             print("Warning: Blynk not available, running in local mode only")
         
@@ -394,19 +398,14 @@ def main():
         last_sensor_read = time.time()
         
         while True:
-            # Handle Blynk connection
-            if blynk is not None and _blynk_is_connected():
+            if blynk is not None:
                 blynk.run()
 
-                # Publish sensor data at interval
-                current_time = time.time()
-                if current_time - last_sensor_read >= sensor_read_interval:
-                    publish_sensor_data()
-                    last_sensor_read = current_time
-            else:
-                if blynk is not None:
-                    print("Attempting to reconnect to Blynk...")
-                    blynk.connect()
+                if _blynk_is_connected():
+                    current_time = time.time()
+                    if current_time - last_sensor_read >= sensor_read_interval:
+                        publish_sensor_data()
+                        last_sensor_read = current_time
             
             time.sleep(0.1)
     
