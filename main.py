@@ -76,9 +76,13 @@ def setup_gpio():
 # =====================
 def _create_blynk_client():
     try:
-        return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT)
+        use_ssl = BLYNK_PORT == 443
+        return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT, ssl=use_ssl)
     except TypeError:
-        return Blynk(BLYNK_AUTH)
+        try:
+            return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT)
+        except TypeError:
+            return Blynk(BLYNK_AUTH)
 
 
 def _blynk_is_connected():
