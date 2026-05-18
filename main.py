@@ -81,6 +81,19 @@ def _create_blynk_client():
         return Blynk(BLYNK_AUTH)
 
 
+def _blynk_is_connected():
+    if blynk is None:
+        return False
+
+    if hasattr(blynk, "is_connected"):
+        return blynk.is_connected()
+
+    if hasattr(blynk, "connected"):
+        return blynk.connected()
+
+    return True
+
+
 try:
     blynk = _create_blynk_client()
     print("Blynk object created")
@@ -382,7 +395,7 @@ def main():
         
         while True:
             # Handle Blynk connection
-            if blynk is not None and blynk.is_connected():
+            if blynk is not None and _blynk_is_connected():
                 blynk.run()
 
                 # Publish sensor data at interval
@@ -422,7 +435,7 @@ def main():
                 pass
         
         GPIO.cleanup()
-        if blynk is not None and blynk.is_connected():
+        if blynk is not None and _blynk_is_connected():
             blynk.disconnect()
         print("Cleanup complete")
 
