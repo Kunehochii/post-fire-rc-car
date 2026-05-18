@@ -45,7 +45,7 @@ Click Play button (▶) → Edit mode (pencil icon)
 
 Add these three widgets to show sensor readings only:
 
-### Add Widget: V4 - Humidity Label
+### Add Widget: V4 - Humidity Label (DHT22)
 
 1. Tap **"+"** → Add widget
 2. Select **"Label"**
@@ -55,7 +55,7 @@ Add these three widgets to show sensor readings only:
    - **Display**: "--" (optional default)
 4. Click Save
 
-### Add Widget: V5 - Temperature Label
+### Add Widget: V5 - Temperature Label (DHT22)
 
 1. Tap **"+"** → Add widget
 2. Select **"Label"**
@@ -102,8 +102,8 @@ The app will automatically update colors.
 
 | Virtual Pin | Widget | Purpose | Range |
 |------------|--------|---------|-------|
-| V4 | Label | Humidity Reading | 0-100% |
-| V5 | Label | Temperature Reading | -40 to 80°C |
+| V4 | Label | DHT22 Humidity Reading | 0-100% |
+| V5 | Label | DHT22 Temperature Reading | -40 to 80°C |
 | V6 | Gauge | Gas/Smoke Level | 0-100 |
 
 ---
@@ -119,7 +119,7 @@ ifconfig
 
 ### Check Blynk Connection
 1. Run main.py
-2. Look for message: `Blynk connected. Ping: XX`
+2. Look for message: `Blynk object created`
 3. Check Blynk app - humidity, temperature, and gas level should update
 
 ### Troubleshooting
@@ -197,4 +197,4 @@ A: App will show "Device Offline". Reconnects automatically when WiFi returns.
 
 ---
 
-**Next: Run `python3 main.py` and open Blynk app to start controlling your RC car!** 🚗📱
+**Next: Run `python3 main.py` and open Blynk app to monitor your RC car sensors.** 🚗📱

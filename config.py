@@ -31,10 +31,10 @@ MQ2_PIN = {
     'do_pin': 6,             # GPIO6 - Digital output (optional, for threshold detection)
 }
 
-# DHT11 Sensor Configuration
+# DHT22 Sensor Configuration
 DHT_PIN = {
     'pin': 4,                # GPIO4 (single wire)
-    'type': 11,              # 11 for DHT11, 22 for DHT22
+    'type': 22,              # 11 for DHT11, 22 for DHT22
 }
 
 # Servo Pins (for camera/sensor mount - optional)
@@ -51,8 +51,8 @@ BLYNK_VIRTUAL_PINS = {
     'joystick': 1,           # V1 - Joystick control
     'buttons': 2,            # V2 - Button controls
     'speed': 3,              # V3 - Speed slider
-    'humidity': 4,           # V4 - DHT11 Humidity
-    'temperature': 5,        # V5 - DHT11 Temperature
+    'humidity': 4,           # V4 - DHT22 Humidity
+    'temperature': 5,        # V5 - DHT22 Temperature
     'gas_level': 6,          # V6 - MQ-2 Gas/Smoke level
 }
 
@@ -66,7 +66,7 @@ MQ2_THRESHOLDS = {
     'danger': 200,           # Danger threshold
 }
 
-# DHT11 Temperature Thresholds
+# DHT22 Temperature Thresholds
 TEMPERATURE_THRESHOLDS = {
     'min_safe': 0,           # Minimum safe temperature
     'max_safe': 60,          # Maximum safe temperature (°C)

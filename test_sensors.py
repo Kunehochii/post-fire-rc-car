@@ -1,6 +1,6 @@
 """
 Sensor Testing Script
-Test DHT11 and MQ-2 sensor functionality
+Test DHT22 and MQ-2 sensor functionality
 """
 
 import time
@@ -14,13 +14,13 @@ DHT_SENSOR_TYPE = DHT_PIN['type']
 MQ2_CHANNEL = MQ2_PIN['analog']
 
 
-def test_dht11():
-    """Test DHT11 sensor"""
-    print("Testing DHT11 Sensor...")
+def test_dht22():
+    """Test DHT22 sensor"""
+    print("Testing DHT22 Sensor...")
     print("-" * 50)
     
     try:
-        print("Reading DHT11 (this may take a few seconds)...")
+        print("Reading DHT22 (this may take a few seconds)...")
         dht_pin = _get_board_pin(DHT_SENSOR_PIN)
         if DHT_SENSOR_TYPE == 11:
             dht_device = adafruit_dht.DHT11(dht_pin, use_pulseio=False)
@@ -50,11 +50,11 @@ def test_dht11():
         finally:
             dht_device.exit()
 
-        print("\n✓ DHT11 test completed")
+        print("\n✓ DHT22 test completed")
         return True
     
     except Exception as e:
-        print(f"\n✗ DHT11 Error: {e}")
+        print(f"\n✗ DHT22 Error: {e}")
         return False
 
 
@@ -150,8 +150,8 @@ def main():
     # Test I2C first
     results['I2C'] = test_i2c_devices()
     
-    # Test DHT11
-    results['DHT11'] = test_dht11()
+    # Test DHT22
+    results['DHT22'] = test_dht22()
     
     # Test MQ-2
     results['MQ2'] = test_mq2()

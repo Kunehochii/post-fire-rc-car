@@ -1,6 +1,6 @@
 """
 Post-Fire Building Inspection RC Car
-Integration of MQ-2 & DHT11 Sensors with Raspberry Pi and Blynk Interface
+Integration of MQ-2 & DHT22 Sensors with Raspberry Pi and Blynk Interface
 """
 
 import RPi.GPIO as GPIO
@@ -47,7 +47,7 @@ SERVO_VERTICAL = SERVO_PINS['vertical']
 # Sensor pins
 MQ2_ANALOG_PIN = MQ2_PIN['analog']
 DHT_SENSOR_PIN = DHT_PIN['pin']
-DHT_SENSOR_TYPE = DHT_PIN['type']  # 11 for DHT11
+DHT_SENSOR_TYPE = DHT_PIN['type']  # 11 for DHT11, 22 for DHT22
 
 # =====================
 # Setup GPIO
@@ -257,9 +257,9 @@ def read_mq2_sensor():
         return None
 
 
-def read_dht11_sensor():
+def read_dht22_sensor():
     """
-    Read DHT11 sensor
+    Read DHT22 sensor
     Returns tuple of (humidity, temperature)
     """
     try:
@@ -273,12 +273,12 @@ def read_dht11_sensor():
         if humidity is not None and temperature is not None:
             return humidity, temperature
         else:
-            print("Failed to read DHT11 sensor")
+            print("Failed to read DHT22 sensor")
             return None, None
     except RuntimeError:
         return None, None
     except Exception as e:
-        print(f"Error reading DHT11: {e}")
+        print(f"Error reading DHT22: {e}")
         return None, None
 
 
@@ -315,7 +315,7 @@ def publish_sensor_data():
     """Publish sensor data to Blynk virtual pins"""
     try:
         # Read sensors
-        humidity, temperature = read_dht11_sensor()
+        humidity, temperature = read_dht22_sensor()
         mq2_value = read_mq2_sensor()
         
         # Publish to Blynk
