@@ -9,7 +9,7 @@ Update these settings based on your hardware setup
 # Get your auth token from the Blynk app (more.blynk.cloud)
 BLYNK_AUTH = "Yci2voznzgg1oYSjZOrV0hwvMYBoSk0p"
 BLYNK_SERVER = "blynk.cloud"
-BLYNK_PORT = 443
+BLYNK_PORT = 80
 
 # =====================
 # GPIO Pin Configuration (BCM numbering)

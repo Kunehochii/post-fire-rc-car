@@ -431,14 +431,25 @@ def main():
         # Main loop
         sensor_read_interval = 2  # Read sensors every 2 seconds
         last_sensor_read = time.time()
+        last_blynk_attempt = 0
         
         while True:
             if blynk is not None:
-                if _safe_blynk_run():
-                    current_time = time.time()
-                    if current_time - last_sensor_read >= sensor_read_interval:
-                        publish_sensor_data()
-                        last_sensor_read = current_time
+                current_time = time.time()
+                is_connected = _safe_blynk_run()
+
+                if not is_connected and hasattr(blynk, "connect"):
+                    if current_time - last_blynk_attempt >= 5:
+                        try:
+                            print("Attempting to reconnect to Blynk...")
+                            blynk.connect()
+                        except Exception as e:
+                            print(f"Warning: Blynk connect failed: {e}")
+                        last_blynk_attempt = current_time
+
+                if is_connected and current_time - last_sensor_read >= sensor_read_interval:
+                    publish_sensor_data()
+                    last_sensor_read = current_time
             
             time.sleep(0.1)
     
