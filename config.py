@@ -7,7 +7,7 @@ Update these settings based on your hardware setup
 # Blynk Configuration
 # =====================
 # Get your auth token from the Blynk app (more.blynk.cloud)
-BLYNK_AUTH = "7COt7J6ew8w94oPzzkQdGU9I8pYE4Uss"
+BLYNK_AUTH = "Yci2voznzgg1oYSjZOrV0hwvMYBoSk0p"
 BLYNK_SERVER = "blynk.cloud"
 BLYNK_PORT = 443
 

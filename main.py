@@ -98,6 +98,37 @@ def _blynk_is_connected():
     return True
 
 
+def _reset_blynk_client():
+    global blynk
+
+    if blynk is not None:
+        try:
+            blynk.disconnect()
+        except Exception:
+            pass
+
+    try:
+        blynk = _create_blynk_client()
+        print("Blynk client reset")
+    except Exception as e:
+        print(f"Warning: Blynk reset failed: {e}")
+        blynk = None
+
+
+def _safe_blynk_run():
+    if blynk is None:
+        return False
+
+    try:
+        blynk.run()
+    except (BrokenPipeError, OSError) as e:
+        print(f"Warning: Blynk connection lost: {e}")
+        _reset_blynk_client()
+        return False
+
+    return _blynk_is_connected()
+
+
 try:
     blynk = _create_blynk_client()
     print("Blynk object created")
@@ -403,9 +434,7 @@ def main():
         
         while True:
             if blynk is not None:
-                blynk.run()
-
-                if _blynk_is_connected():
+                if _safe_blynk_run():
                     current_time = time.time()
                     if current_time - last_sensor_read >= sensor_read_interval:
                         publish_sensor_data()
