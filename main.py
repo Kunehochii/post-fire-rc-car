@@ -75,14 +75,18 @@ def setup_gpio():
 # Blynk & ADC Initialization
 # =====================
 def _create_blynk_client():
-    try:
-        use_ssl = BLYNK_PORT == 443
-        return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT, ssl=use_ssl)
-    except TypeError:
+    use_ssl = BLYNK_PORT == 443
+    kwargs = {"server": BLYNK_SERVER, "port": BLYNK_PORT}
+    for ssl_kw in ("ssl", "secure"):
         try:
-            return Blynk(BLYNK_AUTH, server=BLYNK_SERVER, port=BLYNK_PORT)
+            return Blynk(BLYNK_AUTH, **kwargs, **{ssl_kw: use_ssl})
         except TypeError:
-            return Blynk(BLYNK_AUTH)
+            pass
+
+    try:
+        return Blynk(BLYNK_AUTH, **kwargs)
+    except TypeError:
+        return Blynk(BLYNK_AUTH)
 
 
 def _blynk_is_connected():
